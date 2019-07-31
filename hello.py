@@ -1,12 +1,7 @@
 def app(environ, start_response):
 	query = environ['QUERY_STRING']
-	data = b''
-	for item in query.split('&'):
-		data += item + b'\n'
+        data = [bytes(item + '\n', 'ascii') for item in query.split('&')]
 	status = '200 OK'
-	headers = [
-		('Content-type', 'text/plain'),
-		('Content-length', str(len(data)))
-	]
+	headers = [('Content-type', 'text/plain')]
 	start_response(status, headers)
 	return data
