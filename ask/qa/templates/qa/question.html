@@ -1,0 +1,31 @@
+{% extends 'qa/base.html' %}
+
+
+{% block title %}
+    Question
+{% endblock title %}
+
+
+{% block content %}
+  <div class="container">
+
+		<br><br>
+    <h2>{{ question.title }}</h2>
+    <i>{{ question.added_at }}</i>
+		<br><br>
+    <p>{{ question.text }}</p>
+		<b>&nbsp&nbsp&nbsp -  {{ question.author }}</b>
+		<br><br><br>
+
+		<h4>Answers:</h4>
+		<ul>
+		{% for answer in question.answer_set.all %}
+			<br>
+			<li>{{ answer.text }}</li>
+			<b>&nbsp&nbsp&nbsp -  {{ answer.author }}</b>
+			<br>
+		{% endfor %}
+		</ul>
+
+  </div>
+{% endblock content %}
