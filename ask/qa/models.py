@@ -7,7 +7,7 @@ class QuestionManager(models.Manager):
         return super().get_queryset()
 
     def new(self):
-        return self.get_queryset().order_by('-added_at')[:5]
+        return self.get_queryset().order_by('-added_at')
 
     def popular(self):
         return self.get_queryset().order_by('-rating')
@@ -19,7 +19,7 @@ class Question(models.Model):
     added_at = models.DateTimeField(blank=True, auto_now_add=True)
     rating = models.IntegerField(default=0)
     author = models.ForeignKey(User, null=True, on_delete=models.SET_NULL)
-    likes = models.ManyToManyField(User, related_name='likes_set')
+    likes = models.ManyToManyField(User, related_name='likes_set', blank=True)
     objects = QuestionManager()
 
     def __str__(self):
@@ -29,7 +29,7 @@ class Question(models.Model):
 class Answer(models.Model):
     text = models.CharField(max_length=300)
     added_at = models.DateTimeField(blank=True, auto_now_add=True)
-    question = models.OneToOneField(
+    question = models.ForeignKey(
         Question, null=True, on_delete=models.SET_NULL)
     author = models.ForeignKey(User, null=True, on_delete=models.SET_NULL)
 

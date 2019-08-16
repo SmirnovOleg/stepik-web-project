@@ -1,4 +1,5 @@
 *.py[co]
+*.sqlite3
 ask/static
 .vscode
-settings.py
+local_settings.py
