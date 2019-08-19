@@ -2,30 +2,45 @@
 
 
 {% block title %}
-    Question
+Question
 {% endblock title %}
 
 
 {% block content %}
-  <div class="container">
+<div class="container" style="margin-top: 30pt">
 
-		<br><br>
-    <h2>{{ question.title }}</h2>
-    <i>{{ question.added_at }}</i>
-		<br><br>
-    <p>{{ question.text }}</p>
-		<b>&nbsp&nbsp&nbsp -  {{ question.author }}</b>
-		<br><br><br>
+    <p>
+        <h2>{{ question.title }}</h2>
+        <i>{{ question.added_at }}</i>
+    </p>
 
-		<h4>Answers:</h4>
-		<ul>
-		{% for answer in question.answer_set.all %}
-			<br>
-			<li>{{ answer.text }}</li>
-			<b>&nbsp&nbsp&nbsp -  {{ answer.author }}</b>
-			<br>
-		{% endfor %}
-		</ul>
+    <p>
+        {{ question.text }}
+        <br>
+        <b>&nbsp&nbsp&nbsp - {{ question.author }}</b>
+    </p>
 
-  </div>
+    <h4>Answers:</h4>
+    <ul>
+        {% for answer in question.answer_set.all %}
+        <br>
+        <li>{{ answer.text }}</li>
+        <b>&nbsp&nbsp&nbsp - {{ answer.author }}</b>
+        <br>
+        {% endfor %}
+    </ul>
+
+    <form style="margin: 50pt 0" action="{% url 'question' question.id %}" method="post">
+        {% csrf_token %}
+        {{ form.non_field_errors }}
+        <div class="form-group">
+            {{ form.text.errors }}
+            <label for="{{ form.text.id_for_label }}">Your answer:</label>
+            <br>
+            {{ form.text }}
+        </div>
+        <button type="submit" class="btn btn-primary">Submit</button>
+    </form>
+
+</div>
 {% endblock content %}

@@ -2,40 +2,40 @@
 
 
 {% block title %}
-    Main
+Main
 {% endblock title %}
 
 
 {% block nav-home %}
-	<li class="nav-item active">
-		<a class="nav-link" href="/">Home</a>
-	</li>
+<li class="nav-item active">
+    <a class="nav-link" href="/">Home</a>
+</li>
 {% endblock nav-home %}
 
 
 {% block content %}
-  <div class="container">
+<div class="container">
 
-  <div class='row mt-4'>
-    <h1>Main<h1>
-  </div>
+    <div class='row mt-4'>
+        <h1>New<h1>
+    </div>
 
-  <div class='row'>
-    <ul>
-      {% for question in current_questions %}
-        <li class="my-3">
-          <h5><a href="{% url 'question' question.id %}">{{ question.title }}</a></h5>
-          {{ question.added_at }}
-        </li>
-      {% endfor %}
-    </ul>
-  </div>
+    <div class='row'>
+        <ul>
+            {% for question in current_questions %}
+            <li class="my-3">
+                <h5><a href="{% url 'question' question.id %}">{{ question.title }}</a></h5>
+                {{ question.added_at }}
+            </li>
+            {% endfor %}
+        </ul>
+    </div>
 
-  <div class='row'>
-    {% with current=current_questions %}
-      {% include 'qa/paginator.html' %}
-    {% endwith %}
-  </div>
+    <div class='row'>
+        {% with current=current_questions %}
+        {% include 'qa/paginator.html' %}
+        {% endwith %}
+    </div>
 
-  </div>
+</div>
 {% endblock content %}
