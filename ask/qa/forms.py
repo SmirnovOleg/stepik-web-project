@@ -1,6 +1,7 @@
 from django import forms
-from .models import Question, Answer
 from django.shortcuts import get_object_or_404
+from .models import Question, Answer, User
+from .actions import hash
 
 
 class AskForm(forms.Form):
@@ -25,3 +26,19 @@ class AnswerForm(forms.Form):
         answer = Answer(text=self.cleaned_data['text'], question=question)
         answer.save()
         return answer
+
+
+class SignUpForm(forms.Form):
+    login = forms.CharField(max_length=20)
+    password = forms.CharField(widget=forms.PasswordInput)
+
+    def save(self):
+        hashed_pass = hash(self.cleaned_data['password'])
+        user = User(login=self.cleaned_data['login'], password=hashed_pass)
+        user.save()
+        return user
+
+
+class LoginForm(forms.Form):
+    login = forms.CharField(max_length=20)
+    password = forms.CharField(widget=forms.PasswordInput)

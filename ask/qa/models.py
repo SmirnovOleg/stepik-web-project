@@ -1,5 +1,21 @@
 from django.db import models
-from django.contrib.auth.models import User
+
+
+class User(models.Model):
+    login = models.CharField(max_length=20, unique=True)
+    password = models.CharField(max_length=30)
+
+    def __str__(self):
+        return self.login
+
+
+class Session(models.Model):
+    key = models.CharField(max_length=50, unique=True)
+    user = models.ForeignKey(User, null=True, on_delete=models.SET_NULL)
+    expires = models.DateTimeField()
+
+    def __str__(self):
+        return self.key
 
 
 class QuestionManager(models.Manager):

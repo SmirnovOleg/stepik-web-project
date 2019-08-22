@@ -1,8 +1,10 @@
 from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponse, HttpResponseRedirect
-from .models import Question, Answer
 from django.core.paginator import Paginator
-from .forms import AnswerForm, AskForm
+from datetime import datetime, timedelta
+from .forms import AnswerForm, AskForm, SignUpForm, LoginForm
+from .models import Question, Answer
+from .actions import do_login
 
 
 def paginate(objects, page):
@@ -45,3 +47,39 @@ def ask(request):
     else:
         form = AskForm()
     return render(request, 'qa/ask.html', {'form': form})
+
+
+def signup(request):
+    if (request.method == 'POST'):
+        form = SignUpForm(request.POST)
+        if (form.is_valid()):
+            form.save()
+            return HttpResponseRedirect('/')
+    else:
+        form = SignUpForm()
+    return render(request, 'qa/signup.html', {'form': form})
+
+
+def login(request):
+    error = ''
+    if (request.method == 'POST'):
+        form = LoginForm(request.POST)
+        if (form.is_valid()):
+            login = request.POST.get('login')
+            password = request.POST.get('password')
+            sessid = do_login(login, password)
+            if (sessid):
+                response = HttpResponseRedirect('/')
+                response.set_cookie(
+                    key='sessid',
+                    value=sessid,
+                    path='/',
+                    httponly=True,
+                    expires=datetime.now() + timedelta(days=1)
+                )
+                return response
+            else:
+                error = 'Incorrect login or password'
+    else:
+        form = LoginForm()
+    return render(request, 'qa/login.html', {'form': form, 'error': error})
