@@ -9,5 +9,6 @@ urlpatterns = [
     path('ask/', views.ask, name='ask'),
     path('popular/', views.popular, name='popular'),
     path('new/', views.index, name='new'),
-    path('', views.index, name='index')
+    path('logout/', views.logout, name='logout'),
+    path('', views.index, name='index'),
 ]

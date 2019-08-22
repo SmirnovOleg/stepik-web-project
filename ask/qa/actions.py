@@ -1,7 +1,13 @@
 from hashlib import md5
 from uuid import uuid4
 from datetime import datetime, timedelta
+from django.core.paginator import Paginator
 from .models import User, Session
+
+
+def paginate(objects, page):
+    paginator = Paginator(objects, per_page=2)
+    return paginator.get_page(page)
 
 
 def hash(password):

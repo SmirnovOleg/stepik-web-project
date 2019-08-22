@@ -1,15 +1,11 @@
 from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponse, HttpResponseRedirect
-from django.core.paginator import Paginator
 from datetime import datetime, timedelta
+from django.views.decorators.http import require_POST
 from .forms import AnswerForm, AskForm, SignUpForm, LoginForm
-from .models import Question, Answer
-from .actions import do_login
-
-
-def paginate(objects, page):
-    paginator = Paginator(objects, per_page=2)
-    return paginator.get_page(page)
+from .models import Question, Answer, Session
+from .actions import do_login, paginate
+from .decorators import require_login
 
 
 def index(request):
@@ -26,21 +22,34 @@ def popular(request):
     return render(request, 'qa/popular.html', context=context)
 
 
+@require_login
+@require_POST
+def write_answer(request, question_id):
+    form = AnswerForm(request.POST)
+    form._question_id = question_id
+    form._user = request._user
+    if (form.is_valid()):
+        form.save()
+        return HttpResponseRedirect('/question/{0}/'.format(question_id))
+    else:
+        return question(request, question_id)
+
+
 def question(request, question_id):
     if (request.method == 'POST'):
-        form = AnswerForm(question_id, request.POST)
-        if (form.is_valid()):
-            form.save()
-            return HttpResponseRedirect('/question/{0}/'.format(question_id))
+        return write_answer(request, question_id)
     else:
-        form = AnswerForm(question_id)
+        form = AnswerForm()
+        form._question_id = question_id
     question = get_object_or_404(Question, pk=question_id)
     return render(request, 'qa/question.html', {'question': question, 'form': form})
 
 
+@require_login
 def ask(request):
     if (request.method == 'POST'):
         form = AskForm(request.POST)
+        form._user = request._user
         if (form.is_valid()):
             question_id = form.save()
             return HttpResponseRedirect('/question/{0}/'.format(question_id))
@@ -83,3 +92,10 @@ def login(request):
     else:
         form = LoginForm()
     return render(request, 'qa/login.html', {'form': form, 'error': error})
+
+
+def logout(request):
+    sessid = request.COOKIES.get('sessid')
+    if (sessid is not None):
+        Session.objects.filter(key=sessid).delete()
+    return HttpResponseRedirect('/')
